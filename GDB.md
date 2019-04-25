@@ -46,14 +46,14 @@ Now you can browse the source code around the current breakpoint using the `list
 37
 ```
 
-You can examine the content of a register using the `print` command as follows. Note that the name of the register is given as `$rax`, not `%rax`.
+You can examine the content of a register using the `print` (or simply `p`) command as follows. Note that the name of the register is given as `$rax`, not `%rax`.
 
 ```
 (gdb) print $rdi
 $1 = 140737353273414
 ```
 
-If you want to print the value in a hexadecimal format, use the `print/x` command. The `%rdi` register contains the first argument for `bmp_diag()`. Therefore, the following address `0x7ffff7f2d046` is the address that points to the bitmap data.
+If you want to print the value in a hexadecimal format, use the `print/x` (or simpley `p/x`) command. The `%rdi` register contains the first argument for `bmp_diag()`. Therefore, the following address `0x7ffff7f2d046` is the address that points to the bitmap data.
 
 ```
 (gdb) print/x $rdi
@@ -63,18 +63,18 @@ $2 = 0x7ffff7f2d046
 You can print the value of any register. The following shows the content of the `%rsi` register that has the second argument. You can see that it has the value `640` which is the width of the input image file.
 
 ```
-(gdb) print $rsi
+(gdb) p $rsi
 $3 = 640
 ```
 
-The '%rcx' register is used to pass the fourth argument. In this case, it has the value `100` which is the `gap` between adjacent diagonal lines (in pixels).
+The `%rcx` register is used to pass the fourth argument. In this case, it has the value `100` which is the `gap` between adjacent diagonal lines (in pixels).
 
 ```
-(gdb) print $rcx
+(gdb) p $rcx
 $4 = 100
 ```
 
-You can print the content of the memory using `x` command. Esepcially, you can print 8 bytes in a hexademical format using the `x/8b` command as shown below. If you want to see 32 bytes, use the `x/32b` command. Initially, the `%rdi` register points to the memory address of the first pixel in the last row of the given input image. The first three bytes, `(0x04, 0x04, 0x04)`, represents the color value for blue, green, and red for that pixel, respectively.
+You can print the content of the memory using the `x` command. Esepcially, you can print 8 bytes in a hexademical format using the `x/8b` command as shown below. If you want to see 32 bytes, use the `x/32b` command. Initially, the `%rdi` register points to the memory address of the first pixel in the last row of the given input image. The first three bytes, `(0x04, 0x04, 0x04)`, represents the color value for blue, green, and red for that pixel, respectively.
 
 ```
 (gdb) x/8b $rdi
@@ -139,7 +139,33 @@ Continuing.
 [Inferior 1 (process 8747) exited normally]
 ```
 
-I believe you know what the `quit` command means.
+It is always a good idea to ask for a help to `gdb`.
+
+```
+(gdb) help
+List of classes of commands:
+
+aliases -- Aliases of other commands
+breakpoints -- Making program stop at certain points
+data -- Examining data
+files -- Specifying and examining files
+internals -- Maintenance commands
+obscure -- Obscure features
+running -- Running the program
+stack -- Examining the stack
+status -- Status inquiries
+support -- Support facilities
+tracepoints -- Tracing of program execution without stopping the program
+user-defined -- User-defined commands
+
+Type "help" followed by a class name for a list of commands in that class.
+Type "help all" for the list of all commands.
+Type "help" followed by command name for full documentation.
+Type "apropos word" to search for commands related to "word".
+Command name abbreviations are allowed if unambiguous.
+```
+
+You know what the following means.
 
 ```
 (gdb) quit
