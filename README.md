@@ -116,7 +116,7 @@ The skeleton code and sample data can be download from Github at https://github.
 
 ## Sample output
 
-This is a sample BMP file with 640 x 359 pixels (``bordeaux.bmp``). 
+This is a sample BMP file with 640 x 359 pixels (``bordeaux.bmp``). If you can not see the image, please try again with the Google Chrome browser.
 
 <p align="center">
 <img src="http://csl.snu.ac.kr/courses/4190.308/2019-1/bordeaux.bmp?sanitize=true">
@@ -128,7 +128,7 @@ If you run your program as follows, it will create a new file named ``out.bmp``.
     $ ./bmpdiag bordeaux.bmp out.bmp 100
 ```
 
-The resulting ``out.bmp`` file should look like this. The gap between diagonal lines is 100 pixels. Your output file ``out.bmp`` should be identical to the ``bordeaux-ans.bmp`` file. You can notice that the diagonal lines start at the upper left corner, i.e., at coordinates (0, 0), and they are drawn at intervals of 100 pixels to the left and right.
+The resulting ``out.bmp`` file should look like this. The gap between diagonal lines is 100 pixels. Your output file ``out.bmp`` should be identical to the ``bordeaux-ans.bmp`` file. You can notice that the diagonal lines start at the upper left corner, i.e., at coordinates (0, 0), and they are drawn at intervals of 100 pixels to the left and right. (Again, if you are unable to see the image, please use the Google Chrome browser.)
 
 <p align="center">
 <img src="http://csl.snu.ac.kr/courses/4190.308/2019-1/bordeaux-ans.bmp?sanitize=true">
