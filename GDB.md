@@ -3,7 +3,7 @@
 * GDB (GNU Debugger) is a powerful tool for debugging your program. For more information, please refer to https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf
 
 
-Invoke gdb with giving the name of your executable file as an argument. Your program should be compiled with "``-Og`" or "``-g`" flag to be used with `gdb`.
+Invoke gdb with giving the name of your executable file as an argument. Your program should be compiled with "`-Og`" or "`-g`" flag to be used with `gdb`.
 
 ```
 $ gdb ./bmpdiag
