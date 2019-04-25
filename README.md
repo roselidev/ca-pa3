@@ -100,7 +100,7 @@ make: \*\*\* [test] Error 1
 $
 ```
 
-The skeleton code and sample data can be download from Github at https://github.com/snu-csl/ca-pa3/. If you don't have the git utility, you need to install it first by performing "``sudo apt install git``" command. 
+The skeleton code and sample data can be download from Github at https://github.com/snu-csl/ca-pa3/. If you don't have the git utility, you need to install it first by performing "``sudo apt install git``" command. You will find `gdb` (GNU Debugger) useful when debugging your program. For more information on `gdb`, please refer to the [GDB.md](GDB.md) file in this directory.
 
 ## Restrictions
 
