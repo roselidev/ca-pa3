@@ -53,7 +53,7 @@ You can examine the content of a register using the `print` (or simply `p`) comm
 $1 = 140737353273414
 ```
 
-If you want to print the value in a hexadecimal format, use the `print/x` (or simpley `p/x`) command. The `%rdi` register contains the first argument for `bmp_diag()`. Therefore, the following address `0x7ffff7f2d046` is the address that points to the bitmap data.
+If you want to print the value in a hexadecimal format, use the `print/x` (or simply `p/x`) command. The `%rdi` register contains the first argument for `bmp_diag()`. Therefore, the following address `0x7ffff7f2d046` is the address that points to the bitmap data.
 
 ```
 (gdb) print/x $rdi
