@@ -34,16 +34,20 @@ bmp_diag:
 	# pixel in the last row of the image.  The following three 
 	# instructions change its color to red.
 
-	movb 	$0x00, (%rdi)			# blue
-	movb	$0x00, 1(%rdi)			# green
-	movb	$0xff, 2(%rdi)			# red
 
+leaq  (%rsi, %rsi, 2), %rax
+addq  %rdi, %rax
+movq  %rax, %r8
+subq  $0x03, %r8
+subq  $0x03,  %rdi
 
+.L2:
+  addq  $0x03,  %rdi
+  movb  $0x00,  (%rdi)
+  movb  $0x00,  1(%rdi)
+  movb  $0xff,  2(%rdi)
+  cmpq  %rdi, %r8
+  jg    .L2
 
+ret
 
-
-
-
-	#------------------------------------------------------------
-
-	ret
