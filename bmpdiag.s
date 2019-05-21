@@ -20,34 +20,19 @@
 
 bmp_diag:
 
-#---------------------------------------
-#   initialize startpoint
-#
-# %rax	 %rcx	 %rdx	 %rsi	 %rdi	%r8
-#   -     gap   h     w    ptr    -
-#
-#---------------------------------------
-
 pushq   %rcx
 pushq   %rdx
 pushq   %rsi
-        ####Stack << w | h | gap |
 
-#get padding value at %rax
-movq	%rsi, %rax	# %rax = w
-andq	$0x03, %rax	# %rax : padding
-
-
-#get bit length of width
-leaq	(%rsi, %rsi, 2), %r8   # %r8 = 3w
-
-#get memory address of (0,0)
-dec   %rdx	      # %rdx = h-1
-addq	%rax, %r8 	# ydecre = %r8 = (3w+padding) : y decrement
-movq  %r8,  %rsi  # %rsi = (3w+padding)
-imulq	%rdx, %rsi 	# %rsi = (h-1)*(3w+padding)
-addq	%rsi, %rdi	# startp = (0,0) = (H-1,0) + %rsi
-movq  $0x00, %rax # x = 0
+movq	%rsi, %rax
+andq	$3, %rax
+leaq	(%rsi, %rsi, 2), %r8
+dec   %rdx
+addq	%rax, %r8
+movq  %r8,  %rsi
+imulq	%rdx, %rsi
+addq	%rsi, %rdi
+movq  $0, %rax
 
 popq  %rsi
 popq  %rdx
@@ -56,81 +41,63 @@ pushq %rdi
 pushq %rdx
 pushq %rsi
 pushq %rcx
-      #######Stack << gap | w | h |(0,0)|
-movq  $0x00, %rcx # y = 0
+movq  $0, %rcx # y = 0
 
-
-#------------------------------------------
-#
-#
-# %rax   %rcx    %rdx    %rsi     %rdi    %r8
-#  x      y        h       w       startp   ydecre
-#
-#
-#------------------------------------------
-.L0: #check modulo
-  popq  %rsi        # %rsi = gap
-  pushq %rax        # store x
-  pushq %rcx        # store y
-  subq  %rcx, %rax  # %rax = x-y
-  movq  $0x00, %rdx  
-  cqto
-  idivq   %rsi        # divide %rax by %rsi , modulo in  %rdx
-  cmpq  $0x00, %rdx # if divided
-  je  .L2 #color
-  jmp .L5 #check modulo2
-        ####Stack <<  y | x | w | h | (0,n) |
-
-.L5: #check modulo2
-  popq  %rcx        # %rcx = y
-  popq  %rax        # %rax = x
-  pushq %rax        # store x
-  pushq %rcx        # store y
-  addq  %rcx, %rax  # %rax = x + y
+.L0:
+  popq  %rsi
+  pushq %rax
+  pushq %rcx
+  subq  %rcx, %rax
   movq  $0x00, %rdx
-  idivq %rsi
-  cmpq  $0x00, %rdx # if divided
-  je  .L2 #color
-  jmp .L1 #next
-        ####Stack << y | x | w | h | (0,n) |
+  cqto
+  idivq   %rsi
+  cmpq  $0x00, %rdx
+  je  .L2
 
-.L1:  #next
-  movq  %rsi, %rdx  # %rdx = gap
-  popq  %rcx        # %rcx = y
-  popq  %rax        # %rax = x
-  popq  %rsi        # %rsi = w
-  inc   %rax        # x = x + 1
-  cmpq  %rax, %rsi  # x < width?
-  jle   .L3 # if not, y increment
-  pushq %rsi        # store w
-  pushq %rdx        # store gap
-        ####Stack << gap | w | h | (0,n) |
-  addq  $0x03, %rdi #next point
+  popq  %rcx
+  popq  %rax
+  pushq %rax
+  pushq %rcx
+  addq  %rcx, %rax
+  movq  $0, %rdx
+  idivq %rsi
+  cmpq  $0, %rdx
+  je  .L2
+  jmp .L1
+.L1:
+  movq  %rsi, %rdx
+  popq  %rcx
+  popq  %rax
+  popq  %rsi
+  inc   %rax
+  cmpq  %rax, %rsi
+  jle   .L3
+  pushq %rsi
+  pushq %rdx
+  addq  $3, %rdi
   jmp   .L0
 
   
-.L2: #color
-  movb  $0x00, (%rdi)
-  movb  $0x00, 1(%rdi)
+.L2:
+  movw  $0, (%rdi)
   movb  $0xff, 2(%rdi)
   
-  jmp .L1 #next
+  jmp .L1
 
 
-.L3: #increment y(=decrement pointer in y direction)
-  popq  %rax        # %rax = h
-  popq  %rdi        # %rdi = (0, n)
-  inc   %rcx        # y = y+1
-  cmpq  %rcx, %rax  # y < height?
-  jle   .L4 #if not, return
+.L3:
+  popq  %rax
+  popq  %rdi
+  inc   %rcx
+  cmpq  %rcx, %rax
+  jle   .L4
   
-  subq  %r8,  %rdi  # %rdi = (0, n+1)
-  pushq %rdi        #store (0, n+1)
-  pushq %rax        #store h
-  pushq %rsi        #store w
-  pushq %rdx        #store gap
-                ####Stack << gap | w | h | (0,n+1)
-  movq  $0x00,  %rax  # x = 0
+  subq  %r8,  %rdi
+  pushq %rdi
+  pushq %rax
+  pushq %rsi
+  pushq %rdx
+  movq  $0,  %rax
   jmp   .L0
 
 
