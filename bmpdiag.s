@@ -20,87 +20,58 @@
 
 bmp_diag:
 
-pushq   %rcx
-pushq   %rdx
-pushq   %rsi
-
 movq	%rsi, %rax
-andq	$3, %rax
+and 	$3, %rax
 leaq	(%rsi, %rsi, 2), %r8
-dec   %rdx
-addq	%rax, %r8
-movq  %r8,  %rsi
-imulq	%rdx, %rsi
-addq	%rsi, %rdi
-movq  $0, %rax
+addq  %rax, %r8
 
-popq  %rsi
-popq  %rdx
-popq  %rcx
-pushq %rdi
+pushq %r8
 pushq %rdx
 pushq %rsi
 pushq %rcx
-movq  $0, %rcx # y = 0
+
+dec   %rdx
+imulq	%rdx, %r8
+addq	%r8, %rdi
+movq  %rdi, %rsi
+xor %rcx, %rcx
+xor %r8,  %r8
 
 .L0:
-  popq  %rsi
-  pushq %rax
-  pushq %rcx
+  movq  %r8, %rax
   subq  %rcx, %rax
-  movq  $0x00, %rdx
+  xor   %rdx,%rdx
   cqto
-  idivq   %rsi
-  cmpq  $0x00, %rdx
-  je  .L2
+  idivq (%rsp)
+  or $0, %rdx
+  jz  .L2
 
-  popq  %rcx
-  popq  %rax
-  pushq %rax
-  pushq %rcx
-  addq  %rcx, %rax
-  movq  $0, %rdx
-  idivq %rsi
-  cmpq  $0, %rdx
-  je  .L2
-  jmp .L1
+  leaq  (%r8, %rcx), %rax
+  xor   %rdx, %rdx
+  idivq (%rsp)
+  or $0, %rdx
+  jz  .L2
 .L1:
-  movq  %rsi, %rdx
-  popq  %rcx
-  popq  %rax
-  popq  %rsi
-  inc   %rax
-  cmpq  %rax, %rsi
-  jle   .L3
-  pushq %rsi
-  pushq %rdx
+  inc   %r8
   addq  $3, %rdi
+  cmpq  %r8 , 8(%rsp)
+  jg    .L0
+.L3:
+  inc   %rcx
+  cmpq  %rcx, 16(%rsp)
+  jle   .L4
+  subq  24(%rsp), %rsi
+  movq  %rsi, %rdi
+  xor   %r8, %r8
   jmp   .L0
-
-  
 .L2:
   movw  $0, (%rdi)
   movb  $0xff, 2(%rdi)
-  
   jmp .L1
-
-
-.L3:
-  popq  %rax
-  popq  %rdi
-  inc   %rcx
-  cmpq  %rcx, %rax
-  jle   .L4
-  
-  subq  %r8,  %rdi
-  pushq %rdi
-  pushq %rax
-  pushq %rsi
-  pushq %rdx
-  movq  $0,  %rax
-  jmp   .L0
-
-
 .L4:
+  popq %rax
+  popq %rax
+  popq %rax
+  popq %rax
   ret
 
