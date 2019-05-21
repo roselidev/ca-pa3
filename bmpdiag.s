@@ -73,12 +73,26 @@ movq  $0x00, %rcx # y = 0
   pushq %rax        # store x
   pushq %rcx        # store y
   subq  %rcx, %rax  # %rax = x-y
-  neg   %rax  
-  idivq %rsi        # divide %rax by %rsi , modulo in  %rdx
+  movq  $0x00, %rdx  
+  cqto
+  idivq   %rsi        # divide %rax by %rsi , modulo in  %rdx
+  cmpq  $0x00, %rdx # if divided
+  je  .L2 #color
+  jmp .L5 #check modulo2
+        ####Stack <<  y | x | w | h | (0,n) |
+
+.L5: #check modulo2
+  popq  %rcx        # %rcx = y
+  popq  %rax        # %rax = x
+  pushq %rax        # store x
+  pushq %rcx        # store y
+  addq  %rcx, %rax  # %rax = x + y
+  movq  $0x00, %rdx
+  idivq %rsi
   cmpq  $0x00, %rdx # if divided
   je  .L2 #color
   jmp .L1 #next
-        ####Stack <<  y | x | w | h | (0,n) |
+        ####Stack << y | x | w | h | (0,n) |
 
 .L1:  #next
   movq  %rsi, %rdx  # %rdx = gap
@@ -99,6 +113,7 @@ movq  $0x00, %rcx # y = 0
   movb  $0x00, (%rdi)
   movb  $0x00, 1(%rdi)
   movb  $0xff, 2(%rdi)
+  
   jmp .L1 #next
 
 
