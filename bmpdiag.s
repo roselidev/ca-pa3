@@ -28,12 +28,14 @@ bmp_diag:
 	#------------------------------------------------------------
 
 #---------------------------------------
+#   initialize startpoint
 #
 # %rax	 %rcx	 %rdx	 %rsi	 %rdi	%r8
 #   -     gap      h       w      ptr    -
 #
 #---------------------------------------
 
+pushq   %rdi
 movq	%rsi, %rax	# %rax = w
 andq	$0x03, %rax	# %rax : padding
 leaq	(%rsi, %rsi, 2), %rsi   # %rsi = 3w
@@ -44,17 +46,33 @@ subq	$0x01, %rdx	# %rdx = h-1
 addq	%rax, %rsi	# %rsi = (3w+padding)
 imulq	%rdx, %rsi	# %rsi = (h-1)*(3w+padding)
 addq	%rsi, %rdi	#initialize ptr to (0,0) %rdi = ptr + (h-1)(3w+padding)
-addq	%rdi, %r8	#set endpoint of the line %r8 = %rdi + 3w
+addq	%rax, %r8	# %r8 = 3w+padding
 subq	$0x03, %rdi
+addq    %r8,    %rdi
+popq    %rax
+#------------------------------------------
+#
+#
+# %rax   %rcx    %rdx    %rsi               %rdi    %r8
+#
+#  ptr    gap     h-1   (h-1)(3w+padding)   ptr+%rsi 3w+padding
+#
+#------------------------------------------
+
 
 .L2:
-  addq  $0x03,  %rdi
+  addq  $0x03,  %rdi # x = x+1
+  subq  %r8,    %rdi # y = y-1
+  cmpq  %rdi, %rax
+  jg    .L3
   movb  $0x00,  (%rdi)
   movb  $0x00,  1(%rdi)
   movb  $0xff,  2(%rdi)
-  cmpq  %rdi, %r8
-  jg    .L2
+  cmpq  %rdi, %rax
+  jl    .L2
 
 
+
+.L3:
 ret
 
