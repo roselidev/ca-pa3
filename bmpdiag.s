@@ -27,19 +27,25 @@ bmp_diag:
 	#	gap    is in %rcx
 	#------------------------------------------------------------
 
-	# --> FILL HERE <--
+#---------------------------------------
+#
+# %rax	 %rcx	 %rdx	 %rsi	 %rdi	%r8
+#   -     gap      h       w      ptr    -
+#
+#---------------------------------------
+
+movq	%rsi, %rax	# %rax = w
+andq	$0x03, %rax	# %rax : padding
+leaq	(%rsi, %rsi, 2), %rsi   # %rsi = 3w
+movq	%rsi, %r8	# %r8 = 3w
 
 
-	# Example: Initially, the %rdi register points to the first 
-	# pixel in the last row of the image.  The following three 
-	# instructions change its color to red.
-
-
-leaq  (%rsi, %rsi, 2), %rax
-addq  %rdi, %rax
-movq  %rax, %r8
-subq  $0x03, %r8
-subq  $0x03,  %rdi
+subq	$0x01, %rdx	# %rdx = h-1
+addq	%rax, %rsi	# %rsi = (3w+padding)
+imulq	%rdx, %rsi	# %rsi = (h-1)*(3w+padding)
+addq	%rsi, %rdi	#initialize ptr to (0,0) %rdi = ptr + (h-1)(3w+padding)
+addq	%rdi, %r8	#set endpoint of the line %r8 = %rdi + 3w
+subq	$0x03, %rdi
 
 .L2:
   addq  $0x03,  %rdi
@@ -48,6 +54,7 @@ subq  $0x03,  %rdi
   movb  $0xff,  2(%rdi)
   cmpq  %rdi, %r8
   jg    .L2
+
 
 ret
 
